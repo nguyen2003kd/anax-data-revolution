@@ -184,7 +184,7 @@ export default function App() {
                 placeholder="Nhập tag..." 
                 value={form.tag} 
                 onChange={handleChange} 
-                className={`w-full px-4 py-3 border ${errors.tag ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-black`}
+                className={`w-full px-4 py-3 border ${errors.tag ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-black bg-white`}
               />
               {renderError('tag')}
             </div>
@@ -201,7 +201,7 @@ export default function App() {
                 placeholder="Nhập code..." 
                 value={form.code} 
                 onChange={handleChange} 
-                className={`w-full px-4 py-3 border ${errors.code ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 text-black`}
+                className={`w-full px-4 py-3 border ${errors.code ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 text-black bg-white`}
               />
               {renderError('code')}
             </div>
@@ -218,7 +218,7 @@ export default function App() {
                 placeholder="Nhập category..." 
                 value={form.category} 
                 onChange={handleChange} 
-                className={`w-full px-4 py-3 border ${errors.category ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-black`}
+                className={`w-full px-4 py-3 border ${errors.category ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-black bg-white`}
               />
               {renderError('category')}
             </div>
@@ -235,7 +235,7 @@ export default function App() {
                 placeholder="Nhập title..." 
                 value={form.title} 
                 onChange={handleChange} 
-                className={`w-full px-4 py-3 border ${errors.title ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 text-black`}
+                className={`w-full px-4 py-3 border ${errors.title ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 text-black bg-white`}
               />
               {renderError('title')}
             </div>
@@ -252,7 +252,7 @@ export default function App() {
                 name="date" 
                 value={form.date} 
                 onChange={handleChange} 
-                className={`w-full px-4 py-3 border ${errors.date ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 text-black`}
+                className={`w-full px-4 py-3 border ${errors.date ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 text-black bg-white`}
               />
               {renderError('date')}
             </div>
@@ -269,7 +269,7 @@ export default function App() {
                 placeholder="Nhập mô tả..." 
                 value={form.description} 
                 onChange={handleChange} 
-                className={`w-full px-4 py-3 border ${errors.description ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-black`}
+                className={`w-full px-4 py-3 border ${errors.description ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-black bg-white`}
               />
               {renderError('description')}
             </div>
@@ -288,7 +288,7 @@ export default function App() {
               value={form.content} 
               onChange={handleChange} 
               rows={6}
-              className={`w-full px-4 py-3 border ${errors.content ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200 text-black resize-none`}
+              className={`w-full px-4 py-3 border ${errors.content ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200 text-black bg-white resize-none`}
             />
             {renderError('content')}
           </div>
