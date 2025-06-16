@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { z } from "zod";
 import { 
   Tag, 
   Code, 
@@ -11,25 +12,30 @@ import {
   Send,
   Loader2,
   ArrowUp,
-  CheckCircle2
+  CheckCircle2,
+  AlertCircle
 } from "lucide-react";
 
-interface DataItem {
-  id: number;
-  tag: string;
-  code: string;
-  category: string;
-  title: string;
-  date: string;
-  description: string;
-  content: string;
-}
+// Validation Schema
+const formSchema = z.object({
+  id: z.number(),
+  tag: z.string().min(1, "Tag không được để trống"),
+  code: z.string().min(1, "Code không được để trống"),
+  category: z.string().min(1, "Category không được để trống"),
+  title: z.string().min(1, "Title không được để trống"),
+  date: z.string().min(1, "Ngày không được để trống"),
+  description: z.string().min(1, "Mô tả không được để trống"),
+  content: z.string().min(1, "Nội dung không được để trống"),
+});
+
+type FormData = z.infer<typeof formSchema>;
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [form, setForm] = useState<DataItem>({
+  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
+  const [form, setForm] = useState<FormData>({
     id: 0,
     tag: "",
     code: "",
@@ -43,6 +49,10 @@ export default function App() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+    // Clear error when user starts typing
+    if (errors[name as keyof FormData]) {
+      setErrors(prev => ({ ...prev, [name]: undefined }));
+    }
   };
 
   // Handle scroll events
@@ -63,7 +73,29 @@ export default function App() {
     });
   };
 
+  const validateForm = (): boolean => {
+    try {
+      formSchema.parse(form);
+      setErrors({});
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const newErrors: Partial<Record<keyof FormData, string>> = {};
+        error.errors.forEach((err) => {
+          const field = err.path[0] as keyof FormData;
+          newErrors[field] = err.message;
+        });
+        setErrors(newErrors);
+      }
+      return false;
+    }
+  };
+
   const handleSend = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
     setIsLoading(true);
   
     try {
@@ -78,7 +110,6 @@ export default function App() {
       const result = await res.json();
       console.log("✅ Kết quả:", result);
       setShowSuccess(true);
-      // Reset form after successful submission
       setForm({
         id: 0,
         tag: "",
@@ -89,7 +120,6 @@ export default function App() {
         description: "",
         content: "",
       });
-      // Hide success message after 3 seconds
       setTimeout(() => {
         setShowSuccess(false);
       }, 3000);
@@ -99,7 +129,20 @@ export default function App() {
       setIsLoading(false);
     }
   };
-  
+
+  // Helper function to render error message
+  const renderError = (field: keyof FormData) => {
+    if (errors[field]) {
+      return (
+        <div className="flex items-center gap-1 text-red-500 text-sm mt-1">
+          <AlertCircle className="w-4 h-4" />
+          <span>{errors[field]}</span>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
       {/* Success Notification */}
@@ -141,8 +184,9 @@ export default function App() {
                 placeholder="Nhập tag..." 
                 value={form.tag} 
                 onChange={handleChange} 
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white focus:bg-white" 
+                className={`w-full px-4 py-3 border ${errors.tag ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-black`}
               />
+              {renderError('tag')}
             </div>
 
             {/* Code Field */}
@@ -157,8 +201,9 @@ export default function App() {
                 placeholder="Nhập code..." 
                 value={form.code} 
                 onChange={handleChange} 
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white focus:bg-white" 
+                className={`w-full px-4 py-3 border ${errors.code ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 text-black`}
               />
+              {renderError('code')}
             </div>
 
             {/* Category Field */}
@@ -173,8 +218,9 @@ export default function App() {
                 placeholder="Nhập category..." 
                 value={form.category} 
                 onChange={handleChange} 
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white focus:bg-white" 
+                className={`w-full px-4 py-3 border ${errors.category ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-black`}
               />
+              {renderError('category')}
             </div>
 
             {/* Title Field */}
@@ -189,8 +235,9 @@ export default function App() {
                 placeholder="Nhập title..." 
                 value={form.title} 
                 onChange={handleChange} 
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white focus:bg-white" 
+                className={`w-full px-4 py-3 border ${errors.title ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 text-black`}
               />
+              {renderError('title')}
             </div>
 
             {/* Date Field */}
@@ -205,8 +252,9 @@ export default function App() {
                 name="date" 
                 value={form.date} 
                 onChange={handleChange} 
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white focus:bg-white" 
+                className={`w-full px-4 py-3 border ${errors.date ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 text-black`}
               />
+              {renderError('date')}
             </div>
 
             {/* Description Field */}
@@ -221,8 +269,9 @@ export default function App() {
                 placeholder="Nhập mô tả..." 
                 value={form.description} 
                 onChange={handleChange} 
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white focus:bg-white" 
+                className={`w-full px-4 py-3 border ${errors.description ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-black`}
               />
+              {renderError('description')}
             </div>
           </div>
 
@@ -239,8 +288,9 @@ export default function App() {
               value={form.content} 
               onChange={handleChange} 
               rows={6}
-              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white focus:bg-white resize-none" 
+              className={`w-full px-4 py-3 border ${errors.content ? 'border-red-500' : 'border-gray-200'} rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200 text-black resize-none`}
             />
+            {renderError('content')}
           </div>
 
           {/* Submit Button */}
